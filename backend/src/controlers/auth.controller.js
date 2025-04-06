@@ -1,3 +1,4 @@
+import { generateToken } from "../lib/util.js";
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 export const signup = async (req, res)=>{
@@ -24,13 +25,22 @@ export const signup = async (req, res)=>{
 
         if(newUser){
             //generate jwt token 
-
+            generateToken(newUser._id,res)
+            await newUser.save();
+            
+            res.status(201).json({
+                _id:newUser._id,
+                fullname: newUser.fullname,
+                email: newUser.email,
+                profilepic: newUser.profilepic,
+            })
         }
         else{
             res.status(400).json({message: "invalid user data"});
         }
    } catch (error) 
    {
+    console.log("Error at signup controller",error.message);
    }
 };
 export const login = (req, res)=>{
