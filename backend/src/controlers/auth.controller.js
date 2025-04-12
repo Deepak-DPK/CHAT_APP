@@ -54,7 +54,7 @@ export const login = async (req, res)=>{
         
         if(!user)
         {
-            return res.status(400).json({message:"Invalid credentials"})
+            return res.status(400).json({message:"Invalid credentials"});
         }
         const isPasswordCorrect =await bcrypt.compare(password, user.password);
         {
@@ -65,17 +65,24 @@ export const login = async (req, res)=>{
         generateToken(user._id,res)
 
         res.status(200).json({
-            _id : user._id,
-            fullName: newUser.fullName,
-            email: newUser.email,
-            profilepic: newUser.profilepic,
+            _id:user._id,
+            fullName: User.fullName,
+            email:User.email,
+            profilepic:User.profilepic,
         })
         }
     } catch (error) {
         console.log("error in login controller", error.message);
-        res.status(500).json({message:"Internal server error"})
+        res.status(500).json({message:"Internal server error"});
     }
 };
 export const logout = (req, res)=>{
-    res.send("logout route");
+    try {
+        res.cookie("jwt", "",{MaxAge:0});
+        res.status(200).json({message:"Logout successfully"});
+    } catch (error) {
+        console.log("Error in logout Controller",error.message);
+        res.status(500).json({message:"Internal server error"});
+
+    }
 };
