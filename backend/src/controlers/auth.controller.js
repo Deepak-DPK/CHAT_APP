@@ -5,7 +5,10 @@ export const signup = async (req, res)=>{
    const {fullName,email,password} = req.body;
    //hashing the password
    try {
-   
+    if(!fullName || !email || !password){
+        return res.status(400).json({message:"all fields are required"});
+    }
+
     if(password.length<6)
     {
         return res.status(400).json({message:"password must be at least 6 characters"});
@@ -20,7 +23,7 @@ export const signup = async (req, res)=>{
         const newUser = new User({
             fullName,
             email,
-            password:hashedPassword,
+            password:hashPassword,
         })
 
         if(newUser){
@@ -30,7 +33,7 @@ export const signup = async (req, res)=>{
             
             res.status(201).json({
                 _id:newUser._id,
-                fullname: newUser.fullname,
+                fullName: newUser.fullName,
                 email: newUser.email,
                 profilepic: newUser.profilepic,
             })
@@ -41,6 +44,7 @@ export const signup = async (req, res)=>{
    } catch (error) 
    {
     console.log("Error at signup controller",error.message);
+    res.status(500).json({message:"Internal server Error"})
    }
 };
 export const login = (req, res)=>{
